@@ -52,6 +52,7 @@ jobs:
           
       - name: Install dependencies
         run: npm install
+        
       - name: PreBuild site
         run: npm run build
         env:
