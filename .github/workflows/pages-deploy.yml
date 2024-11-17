@@ -45,6 +45,14 @@ jobs:
           ruby-version: 3.3
           bundler-cache: true
           
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # 또는 프로젝트에 맞는 Node.js 버전 지정
+          
+      - name: Install dependencies
+        run: npm install
+        
       - name: PreBuild site
         run: npm run build
         env:
