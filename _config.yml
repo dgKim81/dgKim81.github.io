@@ -209,6 +209,9 @@ exclude:
   - LICENSE
   - "*.config.js"
   - package*.json
+  - assets/404.html
+  - about.markdown
+  - index.markdown
 
 jekyll-archives:
   enabled: [categories, tags]
