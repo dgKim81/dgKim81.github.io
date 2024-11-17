@@ -1,8 +1,4 @@
-
-@import 'main
-{%- if jekyll.environment == 'production' -%}
-  .bundle
-{%- endif -%}
-';
+@import "main";
+@import "main.bundle" if(jekyll.environment == "production");
 
 /* append your custom style below */
