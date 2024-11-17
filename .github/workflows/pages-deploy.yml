@@ -53,16 +53,16 @@ jobs:
       - name: Install dependencies
         run: npm install
         
-      - name: Build SCSS to CSS
-        run: bundle exec jekyll build
-        env:
-          JEKYLL_ENV: "production"
-          
       - name: PreBuild site
         run: npm run build
         env:
           JEKYLL_ENV: "production"
-      
+          
+      - name: Build SCSS to CSS
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: "production"
+
       - name: Build site
         run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
         env:
