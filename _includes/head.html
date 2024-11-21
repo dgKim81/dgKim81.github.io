@@ -8,6 +8,12 @@
     name="viewport"
     content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
   >
+ 
+  <meta property="og:url" content="{{ site.url }}">
+  <meta property="og:title" content="{{ site.title }}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{{ site.avatar }}">
+  <meta property="og:description" content="{{ site.description }}">
 
   {%- capture seo_tags -%}
     {% seo title=false %}
