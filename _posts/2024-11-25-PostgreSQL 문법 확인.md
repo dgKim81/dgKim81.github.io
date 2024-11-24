@@ -1,7 +1,7 @@
 ---
-title: PostgreSQL 설치
+title: PostgreSQL 기본사항
 description: >-
-  최근 칭찬하는 글만 보았다. PostgreSQL 을 설치해보자.
+  이글은 작성중 입니다...
 author: dgkim
 date: 2024-11-24 17:58:00 +0900
 categories: [데이터베이스]

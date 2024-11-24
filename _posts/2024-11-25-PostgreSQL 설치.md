@@ -7,7 +7,7 @@ date: 2024-11-24 17:58:00 +0900
 categories: [데이터베이스]
 tags: [PostgreSQL]
 pin: false
-media_subpath: '/posts/20241124'
+media_subpath: '/assets/posts/20241124'
 comments: true
 ---
 요즘 또 눈에 띄는 PostgreSQL에 갑자기 관심이 생겼다. 도대체 어떤 녀석이길래 이렇게나
