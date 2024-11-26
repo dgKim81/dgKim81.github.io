@@ -95,6 +95,111 @@ comments: true
 - 한 줄 주석: `--`
 - 여러 줄 주석: `/* 주석 내용 */`
 
+## 컬럼 참조
+- correlation.columnname (correlation 는 테이블 이름)
+
+## Positional Parameters
+``` SQL
+CREATE FUNCTION dept(text) RETURNS dept
+ AS $$ SELECT * FROM dept WHERE name = $1 $$
+ LANGUAGE SQL;
+```
+$1은 함수의 첫번째 파라미터입니다.
+
+## Subscripts
+- expression\[subscript\]
+``` SQL
+mytable.arraycolumn[4]
+mytable.two_d_column[17][34]
+$1[10:42]
+(arrayfunction(a,b))[42]
+```
+## 필드 선택
+- expression.fieldname
+
+## 함수호출
+- function_name ([expression [, expression ... ]] )
+
+## 집계 식 (Aggregate Expressions)
+집계식은 쿼리를 통해 선택된 행들을 집계하여 나타낸다. 
+``` SQL
+aggregate_name (expression [ , ... ] [ order_by_clause ] ) [ FILTER ( WHERE filter_clause ) ]
+aggregate_name (ALL expression [ , ... ] [ order_by_clause ] ) [ FILTER ( WHERE filter_clause ) ]
+aggregate_name (DISTINCT expression [ , ... ] [ order_by_clause ] ) [ FILTER ( WHERE filter_clause ) ]
+aggregate_name ( * ) [ FILTER ( WHERE filter_clause ) ]
+aggregate_name ( [ expression [ , ... ] ] ) WITHIN GROUP ( order_by_clause ) [ FILTER ( WHERE filter_clause ) ]
+```
+1. 각 행을 한번식 입력하여 집계 합니다.
+2. ALL은 기본값입니다. 첫번째와 같습니다.
+3. 식에서 고유한 값을 찾아 각각 한번식 집계 합니다.
+4. 특정 값을 지정하지 않고, 각 행을 집계 합니다.
+5. WITHIN GROUP 문법은 ordered-set aggregates와 같이 정렬이 필수인 집계 함수에서 사용됩니다.(이것은 파악 중 입니다.)
+
+## Window Function Calls
+
+``` SQL
+function_name ([expression [, expression ... ]]) [ FILTER
+ ( WHERE filter_clause ) ] OVER window_name
+function_name ([expression [, expression ... ]]) [ FILTER
+ ( WHERE filter_clause ) ] OVER ( window_definition )
+function_name ( * ) [ FILTER ( WHERE filter_clause ) ]
+ OVER window_name
+function_name ( * ) [ FILTER ( WHERE filter_clause ) ] OVER
+ ( window_definition )
+```
+***window_definition***
+``` SQL
+[ existing_window_name ]
+[ PARTITION BY expression [, ...] ]
+[ ORDER BY expression [ ASC | DESC | USING operator ] [ NULLS { FIRST
+ | LAST } ] [, ...] ]
+[ frame_clause ]
+```
+***frame_clause***
+``` SQL
+{ RANGE | ROWS | GROUPS } frame_start [ frame_exclusion ]
+{ RANGE | ROWS | GROUPS } BETWEEN frame_start AND frame_end
+ [ frame_exclusion ]
+```
+
+***frame_start, frame_end***
+``` SQL
+UNBOUNDED PRECEDING
+offset PRECEDING
+CURRENT ROW
+offset FOLLOWING
+UNBOUNDED FOLLOWING
+```
+***frame_exclusion***
+``` SQL
+EXCLUDE CURRENT ROW
+EXCLUDE GROUP
+EXCLUDE TIES
+EXCLUDE NO OTHERS
+```
+
+## 배열 생성자
+- SELECT ARRAY[1,2,3+4];
+
+## 행 생성자
+- SELECT ROW(1,2.5,'this is a test');
+
+## 함수 호출
+- 함수 시그니처 : concat_lower_or_upper(a text, b text, uppercase boolean DEFAULT false)
+
+***위치 표기법***
+SELECT concat_lower_or_upper('Hello', 'World', true);
+
+***이름 표기법***
+SELECT concat_lower_or_upper(a => 'Hello', b => 'World', uppercase => true);
+
+과거버젼
+SELECT concat_lower_or_upper(a := 'Hello', uppercase := true, b := 'World');
+
+
+***혼합 표기법***
+SELECT concat_lower_or_upper('Hello', 'World', uppercase => true);
+
 ## SQL 표준과 PostgreSQL의 차이점
 - PostgreSQL은 표준 SQL과 다른 몇 가지 특징이 있습니다. 예를 들어, `$` 기호는 표준 SQL에서 권장되지 않지만, PostgreSQL에서는 함수나 위치 매개변수를 나타내는 데 사용할 수 있습니다. 이 점을 유의하여 사용하는 것이 좋습니다.
 - 타입 변환에서도 PostgreSQL의 `::` 연산자는 표준 SQL과 달리 사용되므로, 다른 데이터베이스와의 호환성을 고려해야 합니다.
