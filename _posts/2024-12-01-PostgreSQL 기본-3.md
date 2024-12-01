@@ -3,11 +3,11 @@ title: PostgreSQL 기본 - 테이블
 description: >-
   테이블 생성과 관련한 정리
 author: dgkim
-date: 2024-11-30 10:13:00 +0900
+date: 2024-12-01 20:02:00 +0900
 categories: [데이터베이스]
 tags: [PostgreSQL]
 pin: false
-media_subpath: '/posts/20241130'
+media_subpath: '/posts/20241201'
 comments: true
 ---
 # DDL 관련
