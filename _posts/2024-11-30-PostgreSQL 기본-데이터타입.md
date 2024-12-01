@@ -1,5 +1,5 @@
 ---
-title: PostgreSQL 기본 - 2
+title: PostgreSQL 기본 - 데이터타입
 description: >-
   데이터 타입 관련 - 정리 중...
 author: dgkim

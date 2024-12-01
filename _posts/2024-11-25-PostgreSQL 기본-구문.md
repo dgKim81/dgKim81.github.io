@@ -1,5 +1,5 @@
 ---
-title: PostgreSQL 기본 - 1
+title: PostgreSQL 기본 - 구문
 description: >-
   식별자 및 리터럴 규칙 정리.
 author: dgkim
@@ -107,6 +107,9 @@ CREATE FUNCTION dept(text) RETURNS dept
 $1은 함수의 첫번째 파라미터입니다.
 
 ## Subscripts
+만약 표현식이 배열 타입의 값을 생성한다면, 배열 값의 특정 요소는 특정 구문을 작성하여 추출할 수 있습니다.
+각 첨자는 그 자체로 표현식이며, 이 표현식은 가장 가까운 정수 값으로 반올림됩니다.
+
 - expression\[subscript\]
 ``` SQL
 mytable.arraycolumn[4]
@@ -114,6 +117,7 @@ mytable.two_d_column[17][34]
 $1[10:42]
 (arrayfunction(a,b))[42]
 ```
+
 ## 필드 선택
 - expression.fieldname
 
@@ -121,7 +125,8 @@ $1[10:42]
 - function_name ([expression [, expression ... ]] )
 
 ## 집계 식 (Aggregate Expressions)
-집계식은 쿼리를 통해 선택된 행들을 집계하여 나타낸다. 
+집계 표현식은 질의에서 선택된 행에 걸쳐 집계 함수를 적용한 것을 나타냅니다.
+집계 함수는 여러 입력값을 하나의 출력값으로 변환합니다. 예를 들어 입력값의 합계나 평균 등이 이에 해당합니다.
 ``` SQL
 aggregate_name (expression [ , ... ] [ order_by_clause ] ) [ FILTER ( WHERE filter_clause ) ]
 aggregate_name (ALL expression [ , ... ] [ order_by_clause ] ) [ FILTER ( WHERE filter_clause ) ]
@@ -129,11 +134,14 @@ aggregate_name (DISTINCT expression [ , ... ] [ order_by_clause ] ) [ FILTER ( W
 aggregate_name ( * ) [ FILTER ( WHERE filter_clause ) ]
 aggregate_name ( [ expression [ , ... ] ] ) WITHIN GROUP ( order_by_clause ) [ FILTER ( WHERE filter_clause ) ]
 ```
+여기서 aggregate_name은 이전에 정의된 집계(aggregate)를 나타내며, 스키마 이름으로 한정될 수 있습니다. expression은 집계 표현식이나 윈도우 함수 호출을 포함하지 않는 값 표현식이어야 합니다.
+
 1. 각 행을 한번식 입력하여 집계 합니다.
 2. ALL은 기본값입니다. 첫번째와 같습니다.
-3. 식에서 고유한 값을 찾아 각각 한번식 집계 합니다.
+3. 식에서 고유한 값을 찾아 각각 집계 합니다.
 4. 특정 값을 지정하지 않고, 각 행을 집계 합니다.
 5. WITHIN GROUP 문법은 ordered-set aggregates와 같이 정렬이 필수인 집계 함수에서 사용됩니다.(이것은 파악 중 입니다.)
+
 
 ## Window Function Calls
 
@@ -195,7 +203,6 @@ SELECT concat_lower_or_upper(a => 'Hello', b => 'World', uppercase => true);
 
 과거버젼
 SELECT concat_lower_or_upper(a := 'Hello', uppercase := true, b := 'World');
-
 
 ***혼합 표기법***
 SELECT concat_lower_or_upper('Hello', 'World', uppercase => true);
