@@ -215,6 +215,7 @@ exclude:
   - assets/404.html
   - about.markdown
   - index.markdown
+  - backup
 
 jekyll-archives:
   enabled: [categories, tags]
