@@ -5,7 +5,7 @@ description: >-
 author: dgkim
 date: 2024-11-17 01:19:00 +0900
 categories: [마음가짐]
-tags: [시작]
+tags: [수양]
 pin: false
 media_subpath: '/posts/20241117'
 comments: true
