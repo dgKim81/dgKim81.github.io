@@ -14,6 +14,7 @@ comments: true
 # PostgreSQL 쿼리 관련
 > ANSI SQL 표준를 따른다.
 > 인스턴스 내의 다른 데이터베이스를 참조 할 수 없다. 참조하려면 별도 EXTENSION을 설치해야 한다.
+
 ---
 ## 1. 기본 SELECT
 ```sql
@@ -313,3 +314,18 @@ FROM employees,
 ```
 
 ---
+
+## 14. 샘플 데이터베이스 설치
+
+### GitHub 리소스
+- [Pagila Sample Database](https://github.com/morenoh149/postgresDBSamples)
+
+### 설치 및 로드
+#### SQL 파일 실행하여 데이터 로드
+- **예제:**
+```bash
+./createdb pagila -U postgres
+./psql -U postgres -d pagila -a -f /e/postgreSQL/sample/pagila-0.10.1/pagila-schema.sql
+./psql -U postgres -d pagila -a -f /e/postgreSQL/sample/pagila-0.10.1/pagila-data.sql
+./psql -U postgres -d pagila -a -f /e/postgreSQL/sample/pagila-0.10.1/pagila-insert-data.sql
+```
