@@ -397,3 +397,43 @@ spring.mvc.view.suffix=
 \#spring의 상세 로그를 볼수 있다.
 \#logging.level 하위로 패키지 일부를 쓰면 된다. 아래는  org.springframework 하위를 모두 볼것이므로..
 logging.level.org.springframework=debug
+
+
+RequestParam - QueryString
+ModelMap - model : 스프링에서 쓰는 옵션이다.
+
+로그에 대해 살펴보자..
+초보 개발자들에게 정말 중요하다.
+debug 레벨은 성능에 많은 영향을 끼치게 된다.
+
+logging.level.org.springframework=debug
+위의 설정에서 org.springframework 이것은 패키지 이름이다.
+logging.level.[패키지 이름]
+
+로그 쓰기
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+private Logger logger = LoggerFactory.getLogger(getClass()); 
+
+logger.debug("Request param is {}", name);
+
+spring boot log back는 slf4j 이다.
+
+디스패쳐 서블릿 FrontController가 먼저 받고, controller 또는 view 를 실행한다.
+controller가 식별 되면 controller 실행하고 모델과 view를 받아온다.
+view를 식별하고 (ViewResolver) 뷰를 실행해서 반환한다.
+
+모델은 ModelMap을 사용한다.(일반적으로..)
+@RequestParam controller에서 파라미터 받을 때
+
+## Request vs Model vs Session
+Request : 
+Model : 
+Session : 
+
+@SessionAttributes("name") Controller에 넣어주면
+해당 Session을 사용하는 모든 곳에서 사용가능하다. ModelMap와 연계해서 사용이 가능하다.
+
+
+## webjars
+자동으로 bootstrap를 받는다.. 웹 라이브러리를 자동으로 유지관리하는 기능인듯 하다.
