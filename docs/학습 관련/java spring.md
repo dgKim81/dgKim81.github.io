@@ -21,7 +21,7 @@ bean을 사용해서 새로운 bean을 생성가능하다.
 bean 검색할때 여러개가 나오면 문제가 된다.
 
 spring container -> IOC container
-Bean Factory : Basic Spring Contaier -> IOT 메모리에 심한 제약
+Bean Factory : Basic Spring Contaier -> IOT 메모리에 심한 제약이 있을 때 사용된다.
 Application Context : Advenced Apring containser with enterprise-specific faeatures -> IOC Container
 *. 일반적으로 사용한다.
 
@@ -72,7 +72,7 @@ Qualifier가 지정되어있지 않다면, Qualifier 다음에 redixSort 클래�
 3. 필드 기반 @Autowired - 필드에 정의해준다. 
 
 스프링 프레임워크의 중요한 용어
-@component : 검색되면 스프링 빈으로 사용할 수 있는 인스턴스의 클래스
+@Component : 검색되면 스프링 빈으로 사용할 수 있는 인스턴스의 클래스
 Dependency : 
 @ComponentScan : 컴포넌트를 검색할 패키지 스캔
 DependencyInjection: 의존성 주입
@@ -175,7 +175,7 @@ spring stereotype
 
 복습
 @Configuration : @Bean 메서드를 하나이상 나타난다.
-@ComponentScan : 검포넌트 스캔 위치를 정의한다.
+@ComponentScan : 컴컴포넌트 스캔 위치를 정의한다.
 @Bean
 @Component : 
 @Service :
@@ -437,3 +437,168 @@ Session :
 
 ## webjars
 자동으로 bootstrap를 받는다.. 웹 라이브러리를 자동으로 유지관리하는 기능인듯 하다.
+webjars를 사용할때 "/META-INF/resources"는 쓰지 않는다.
+/META-INF/resources/webjars/bootstrap/5.1.3/css/bootstrap.min.css
+/META-INF/resources/webjars/bootstrap/5.1.3/js/bootstrap.min.js
+/META-INF/resources/webjars/jquery/3.6.0/jquery.min.js
+
+webjars/bootstrap/5.1.3/css/bootstrap.min.css
+webjars/bootstrap/5.1.3/js/bootstrap.min.js
+webjars/jquery/3.6.0/jquery.min.js
+
+<dependency> <!-- webjars -->
+    <groupId>org.webjars</groupId>
+    <artifactId>bootstrap</artifactId>
+    <version>5.1.3</version>
+</dependency>
+
+<dependency> <!-- webjars -->
+    <groupId>org.webjars</groupId>
+    <artifactId>jquery</artifactId>
+    <version>3.6.0</version>
+</dependency>
+
+Spring Boot Starter Validation 이용하기
+pom.xml 에추가.
+
+1. spring boot starter validation
+2. command bean
+3. add Validation to bean
+4. displayvalidation errors in the view
+
+java bean을 바로 바인딩할 수 있다.
+public String addNewTodo(ModelMap model, Todo todo)  
+Todo 처럼 쓴 것을 커맨드 빈 또는 양식 보조 객체라는 개념이다.
+*. 중요한 것은 ModelMap 이 첫번째 파라미터여야 한다.
+   두번째 파라미터가 받을 객체이다.
+**. 영상에서는 spring form tag library 가 필요하다고 했는데.. 그냥 되네?
+***spring form tag library*** 
+양방향 바인딩 구현.
+@Valid를 붙여주고 Todo 클래스의 필드에 검증 어노테이션을 붙인다.
+public String addNewTodo(ModelMap model, @Valid Todo todo)
+
+@Valid 한 상태에서 실패하면 그냥 Exception이 발생한다.
+아래 처럼 BindingResult 를 붙여줘야 한다.
+public String addNewTodo(ModelMap model, @Valid Todo todo, BindingResult result)
+
+<form:input path="description" class="form-control" type="text" required="required"/>
+<form:errors path="description" cssClass="text-danger"/>
+form tab lib에 위와 같이 errors 태그가 존재한다.
+
+spring.mvc.format.date="yyyy-mm-dd" #날짜 형식을 정할 수 있다.
+https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+
+# spring security 
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+
+@Configuration
+public class SpringSecurityConfiguration {
+
+Configuration이기 때문에 여기서 Bean을 생성해서 건네야 한다.
+
+
+
+# JUnit 관련 내용.
+1. 전체 배포하고 테스트하기.
+2. 애플리케이션을 특정 단위를 테스트하기.
+
+JUnit, Mockito
+
+어노테이션
+@BeforeEach 각 테스트 전에 실행하는 것...
+@AfterEach  각 테스트 후에 정리가 필요하면 실행...
+@BeroreAll  정적이어야 한다. 얘는 클래스 레벨 메서드 이기 때문에.. 모든 테스트가 실행되기 전에 실행된다.
+@AfterAll   정적이어야 한다. 클래스 레벨 메서드 이기 때문에.. 모든 테스트가 실행 된 후에 실행된다.
+
+# Mockito 관련 내용
+1. Stubs
+2. Mocks
+
+# 보안에 대한 내용
+1. Authentication : 인증
+2. Authorization : 권한
+3. 보안에 관한 원칙
+    - 신뢰하지 마라.
+    - 최소한의 권한만 부여하라.
+    - 완벽한 조율. : 입구가 하나밖에 없다... 
+    - 심층 보호 구조 : 매 단계마다 검사한다...
+    - 메커니즘의 경제 : 간단한 보안 아키텍처유지, 간단한 시스템이 보호하기 쉽다.
+    - 개방형 보안을을 사용해라.: 표준 보안을 사용한다.
+
+# 스프링 시큐리티의 동작방식
+요청 -> 스프링 시큐리티 -> 디스패쳐 서블릿 -> 콘트롤러
+
+# 스프링 시큐리티 Filter Chine
+단계 별 필터를 실행한다.
+ - 인증 : BasicAuthenticationFilter
+ - 권한부여 : AuthorizationFilter
+ - 다른 피처
+    - CORS : CorsFilter
+    - CSRF  : CsrfFilter
+    - 기본 로그인, 기본 로그아웃 페이지 제공 
+    - 인증과 권한 부여 예외가 발생할 때마다 예외 정보를 HTTP로 적당한 메시지를 보낸다.(ExceptionTranslationFilter)
+필터가 실행 순서대로 진행된다.
+1. 기본 체크 필터 - CORS, CSRF 
+2. 인증 필터
+3. 권한 부여 필터
+
+모든 것이 인증을 하고 들어갈 수 있도록 되어 있다.
+기본적으로 폼 인증을 사용한다.
+
+폼 베이스 인증은 대부분의 웹어플리케이션이 사용하는 인증이다. Session Cookie가 생성된다. JSESSIONID가 생성된다.
+기본 동작이고, Login Page 제공, Logout Page 제공, Logout 끝점이 제공된다.
+
+Basic Authentication
+REST API는 기본적으로 사용된다. 프로덕션 환경에서는 적합하지 않다. 기본 동작이다..
+기본 인증에는 Base 64 인코딩되어서 userName과 password가 request 헤더로 전송된다.
+만료일이 없다.
+
+CSRF (Cross Site Request Forgery)
+웹브라우져에 cookie가 저장 된채로 로그아웃하지 않고 알지 못하는 악성 웹사이트에서 쿠키를 탈취해서 인증 받은 사용자 
+인 것처럼 접근할 수 있다. 이것을 사이트 간 요청 위조라고 한다.
+보호하는 방법
+1. 동기화 토큰을 만든다.
+2. 요청마다 토큰을 생성하는 것이다.
+    - POST PUT 요청을 하면 토큰을 인증한다.
+
+기본 동작으로 적용이 되어 있다. 읽기 요청은 그대로 허용하지만 CSRF 토큰이 필요하다. 403 Forbidden 오류가 난다.
+RestController에서는 CSRF 토큰을 어떻게 알수 있을까?
+spring MVC form:form은 CSRF 토큰을 알아서 만든다. 
+REST Api 요청은 X-CSRF-TOKEN 헤더가 필요하다.
+
+두번째 옵션은 SameSite cookie를 사용한다. (Set-Cookie: SameSite=Strict) 쿠키는 해당 사이트로만 전송된다.
+server.servlet.session.cookie.same-site=strict (Spring Boot 2.6 부터 지원)
+CSRF는 쿠키와 관련 있다. 그래서 SESSION 인증을 하지 않는 REST API는 필요없다.
+
+마지막 방법은 무상태 Rest API를 작성하는 것이다.(Session도 다루지 않음. 따라서 CSRF가 의미가 없음.)
+
+SpringBootWebSecurityConfiguration 는 스프링 부트의 기본 설정이 있다. 찾아가서 기본 설정을 가져오는 것도 방법이다.
+CsrfFilter
+
+CORS Cross origin reserouce sharing
+글로벌 configuration addCorsMappings callback method in WebMvcConfigurer
+로컬 configuration @CrossOrigin - Allow from all origins
+    *. 특정할 수 있다. 
+
+인코딩, 해싱, 암호화 이해하기.
+1. 인코딩 
+  - key, 패스워드에서는 사용되지 않는다.
+  - reversibel 가역적이다.
+  - 보안 데이터에 사용되지 않는다.
+  - 사용 : 압축, 스트리밍.
+  - 예 : base 64, wav, mp3
+
+ 데이터를 다른 형식으로 변환한다. 
+2. 해싱 데이터를 해시로 변환한다.
+  - one way 
+  - 가역적이지 않다. 돌아갈 수 없다.
+  - 사용 : 데이터 무결성을 검증하는데 사용 한다.
+  - 예 : bcrypt, scrypt
+3. 암호화 : 키나 패스워드로 인코딩하고 복호화 할 수 있다.
+  - 키나 패스워드가 필요하다.
+  - 예 : RSA
+  - 암호화 알고리즘을 이용해 암호화 한다.
