@@ -602,3 +602,301 @@ CORS Cross origin reserouce sharing
   - 키나 패스워드가 필요하다.
   - 예 : RSA
   - 암호화 알고리즘을 이용해 암호화 한다.
+
+SHA256은 더이상 안전하지 않다. 권장사항은 1초 원크 팩터 단방향 함수를 사용하는 것이다.
+워크팩터가 뭔야? 시스템에서 패스워드를 계산하는데 걸리는 시간이다. 최소 1초가 걸린다.
+패스워드 저장의 경우는 시간이 오래걸리는 알고리즘을 사용해야 한다.
+BCRYPT, SCRYPT, ARGON2, ...
+
+PasswordEncoder 인터페이스를 제공한다.
+모든 알고리즘이 해싱을 한다.
+권장되는 PasswordEncorder가 BCryptPasswordEncoder 라는 것이다.
+
+JWT에 대해서 알아보자..
+HEADER을 담을 수 있다.
+    알고리즘 
+
+Payload : 
+    iss: issuer, sub: subject, aud: audience, exp: expire, iat : when was token issued? 표준 속성들
+    발행자, 제목, 사용대상, 만료시간, 표준 속성들
+
+signature : 
+    HMACSHA256(
+        base64UrlEncode(header) + "." + 
+        base64UrlEncode(payload),
+        your-256-bit-secret
+    )
+
+암호화 되고 복호화 할 수 있다.
+대칭키 알고리즘을 쓸때 주의사항 올바른 암호화 알고리즘을 사용해야 한다.
+대칭키 암호화 키에 대해 보안을 잘 지켜야 한다.
+대칭키 암호화 키를 공유할 방법을 찾아야 한다.
+
+비대칭 키는 private 키가 있고 public 키가 있다.
+JWT는 비대칭 키를 사용하는게 정석이다.
+
+JWT 플로우
+1. Create JWT
+ - User creadantials
+ - User data
+ - RSA KEY
+2. 요청 헤더의 부분에 JWT를 보낸다.
+ - Authorization Header
+ - Bearer Token
+ - Authorization:Bearer ${JWT_TOKEN}
+3. JWT 
+ - Decoding
+ - RSA key pair(public key)
+ -
+
+Spring에 JWT 설정하기
+1. OAuth2 리소스 서버 설정.
+    1) create key pair
+        - KeyPairGenerator 사용
+        - openssl로 생성.
+    2) create rsa key object using key pair
+        - com.nimbusds.jose.jwk.RASKey
+    3) create JWKSource(JSON Web Key source)
+        - create JWKSet(a new JSON Web Key set) with the RSA Key
+        - Create JWKSource using the JWKSet
+    4) use RSA public Key for decoding
+        - NimbusJwtDecoder.withPublicKey(rsaKey().toRSAPublicKey()).build()
+    5) Use JWKSource for encoding
+        - return new NimbusJwtEncoder(jwkSource());
+        - JWT Resource
+
+@RestController
+public class JwtAuthenticationResource {
+    @PostMapping("/authenticate")
+    public Authentication postMethodName(Authentication authentication) {
+        return authentication;
+    }   
+}
+이렇게 두고 기본 인증방식으로 호출하면 인증 정보가 그대로 반환된다.
+
+JwtEncoder가 필요하다.
+Encoder에는 JwtClaimsSet이 들어 가야한다.
+여기에는 Jwt에 정의 되는 발행자 대상자, 발생 시간, 만료 시간, claim이 들어가고
+build를 통해서 작성한다.
+
+이것을 JwtEncoderParameters에 담아서 JwtEncoder에다가 넘겨주면, tokenValue를 받을 수 있다.
+
+Spring 시큐리티가 어떻게 이뤄지는지 보자..
+
+필터체인이 요청을 가로챈다.
+1. AuthenticationManager에서 시작 된다. 인증을 위한 응답
+스프링 시큐리티의 Authentication은 3가지이다. 
+    - 많은 인증 프로바이더와 상호작용을 하게 된다.
+        SecurityContextHolder 
+        SecurityContext
+        Principal 주체(사용자 세부정보), Credentials 유저명 / 패스워드, Authroities 권한 역활과 권한
+2. AuthenticationProvider - 특정한 인증 타입을 제공하는 다양한 AuthenticationProvider들이 있다.
+    - JwtAuthenticationProvider - JWT Authentication
+3. UserDetailsService - AuthenticationProvider대화하는 인터페이스가 UserDetiailsService이다. 사용자 정보 로드 코어 인터페이스
+*. AuthenticationManage는 다수의 AuthenticationProvider 통신할 수 있고,다수의 UserDetailsService와 통신할 수 있다.
+4. 인증이 성공하면 어떻게 저장할 것인가?
+    - SecurityContextHoler > SecurityContext > Authentication > GrantedAuthority
+    - Authentication - (After Authentication) Holds user (Principal) details
+    - GrantedAuthority - An authority granted to principal (roles. scopes)
+
+스프링 시큐리티 Authorization 에 대해서 (권한)
+1. Global security: authorizeHttpRequests
+    - .requestMatchers("/users").hasRole("USER") // 사용자에게 users 접근 권한주기
+        + hasRole, hasAuthority, hasAnyAuyhority, isAuthenticated
+    - .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자에게 admin 이하 접근 권한 주기
+2. Method security:(@EnableMethodSecurity) // Configuration에 붙여 줘야 한다.
+    *. @EnableMethodSecurity(jsr250Enabled=true, securedEnabled=true) // 예제제
+    - @Pre and @Post Annotations // 이걸 추천한다..
+        + @PreAuthorize("hasRole('USER') and #username == authentication.name")
+        + @PostAuthorize("returnObject.username == 'in28minutes'")
+    - JSR-250 annotations 
+        + @EnableMethodSecurity(jsr250Enabled = true)   // Configuration에 붙여줘야 한다.
+        + @RoleAllowed({"AMDIN", "USER"})
+    - @Secured annotation (스프링에서 예전에 제공한 것)
+        + @EnableMethodSecurity(securedEnabled=true)
+        + @Secured({"ROLE_ADMIN", "ROLE_USER"}) // 권한을 말할 때는 "ROLE_"를 붙여야 한다.
+
+OAuth에 대해서 확인해보자
+1. OAuth는 승인에 사용되는 업계 표준 프로토콜이다.
+    - 인증도 지원하고 있다.(OpenId connector)
+2. OAuth 중요한 개념
+    1) Resource Owner : (ex:구글 드리이브 파일 소유자)
+    2) Client Application : (ex:spring demo)
+    3) Resource Server : (ex:구글 드라이브)
+    4) Authorization Server : (ex:Google OAuth Server)
+3. Spring Application 작성
+    - Spring Web
+    - OAuth Client 
+4. Spring Application 만들기
+    1) OAuthSecurityConfiguration.java 추가
+        (1) 기존 코드 주석
+            - http.formLogin() // 기본 폼 로그인
+            - http.httpBasic() // http 기본 인증
+        (2) 새로운 코드 추가
+            - http.oauth2Login(Customizer.withDefaults(());
+    2) Google에서 Client Application을 위한 설정을 한다.
+        - Authroized redirect URIs : http://localhost:8080/login/oauth2/code/google
+    3) application.properties에 가서 설정해야 한다.
+        - spring.security.oauth2.client.registration.google.client-id=
+        - spring.security.oauth2.client.registration.google.client-secret=
+    4) HelloWorldResource 에서 public String helloWorld(Authentication authentication) // 인증 상세 정보를 받을 수 있다.
+        - org.springframework.security.core.Authentication 을 임포트 한다.
+        - System.out.println(authentication);
+    
+Srping Aop 배우기..
+AOP는 무엇인가? Application은 대부분 계층적 접근을 적용한다.
+Layer 접근
+    Web Layer - 뷰로직, JSON, Rest API, 모든 컨트롤러와 Rest 컨트롤러는 모두 웹레이어이다.
+    Business Layer - 비즈니스 로직
+    Data Layer- JPA spring data
+각각의 레이어는 다루는 일이 다르다.
+    모든 레이어는 공통 관심사가 있다.
+        - Security
+        - Performance
+        - Logging
+    이렇게 횡단을 걸쳐 있는 공통 부분을 공통 관심사라고 한다.
+    크로스 컷팅 Concerns는 관점 지향 프로그램밍으로 구현 할 수 있다.
+
+작업은 어떻게 하는 것인가
+    1. cross cutting concern을 aspect로 구현한다.
+    2. point cut을 구현하고 어디에 적용할지를 명시하는 로직을 구현한다.
+    3. AOP 프래임워크로 구현할 때 일반적인 두가지 방법
+        - Spring AOP
+            완전한 AOP 솔루션은 아닌데 매우 유명하다.
+            오직 스프링 빈과 동작한다.
+            Spring Bean을 실행하기 전에 인터셉터 메서드 콜
+        - AspectJ
+            완전한 AOP 솔루션이다. 많이 쓰이지 않는다.
+            예제 : 어떤 자바 클래스, 메서드라도 인터셉터 콜한다.
+            예제 : 필드 값이 변경 될때 인터셉터 할 수 있다.
+
+*. gradle는 java 버젼을 최소 17은 맞춰야 한다.
+
+Spring에서 바로 실행하는 방법
+CommandLineRunner 인터페이스 구현
+
+Spring AOP 작성!
+메서드가 언제 호출되는지 정의해야 한다.
+포인트 컷으로 정의해준다.
+
+// 설정을 위한 어노테이션
+// AOP
+@Configuration
+@Aspect
+public class LoggingAspect {
+    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    // 포인트 컷 When?
+    // execution(* PACKAGE.*.*(..))    
+    @Before("execution(* com.in28minutes.learn_spring_aop.apoexample.business.*.*(..))")
+    public void LogMethodCall(JoinPoint joinPoint) {
+        // 로직 Whet?
+        logger.info("Method is called - {}", joinPoint);
+    }
+}
+
+용어 정리
+Compile Time
+Advice - 어떤 코드가 실행되나? [[logger.info("Method is called - {}", joinPoint);]]
+    Example: Logging, Authentication
+Pointcut - 인터셉트하려는 메서드 호출을 의미한다.
+    execution(* com.in28minutes.learn_spring_aop.apoexample.business.*.*(..))
+Aspect - 조합 이다
+    1) Advice - 무엇을 할 것인가?
+    2) Pointcut - 언제 메서드 콜을 인터셉터 할 것인가?
+Weaver - 위버는 AOP를 구현한 프레임워크를 의미한다.
+    Advice, Pointcut 를 정의하고 어드바이스가 적시에 구현되는지 확인한다.?
+    AspectJ 또는 Spring AOP
+Weavering - AOP를 실행하는 과정을 통틀어서 위빙이라고 한다.
+
+Runtime
+Join Point - 포인터 컷 조건이 참이면, 어디바이져가 실행된다.
+    특정 인스턴스 실행의 어디바이져가 호출되는 것을 Join Point라고 한다.
+    메서드 호출과 관련된 정보를 더 제공한다.
+
+AOP 어노테이션 
+@Before - 메서드가 콜 되기 전에 실행된다.
+@After - 메서드가 실행된 후에 실행된다. 
+    1) 성공적으로 끝났든, 
+    2) 오류가 던져졌든든
+@AfterReturning - 메서드가 실행에 성공했을 때에만 실행된다.
+@AfterThrowing - 메서드가 예외를 던졌을 때에만 실행된다.
+@Around - 실행 전후에 뭔가를 한다.
+    - 메서드를 실행 전후를 작성하고 그 사이에 메서드를 호출한다.
+
+public class CommonPointcutConfig {
+
+    @Pointcut("execution(* com.in28minutes.learn_spring_aop.apoexample.business.*.*(..))")
+    public void businessPackageConfig() {}
+
+}
+
+@Before("com.in28minutes.learn_spring_aop.apoexample.aspects.CommonPointcutConfig.businessPackageConfig()")
+public void beforeLogMethodCall(JoinPoint joinPoint) {
+    // 로직 Whet?
+    logger.info("Before Aspect - {}} is called with arguments : {}", joinPoint, joinPoint.getArgs());
+}
+
+한번에 다된다..!! 
+한곳에서 pointcut을 모두 정의할 수 있다. 공용 포인트 컷이다~!.
+
+@Pointcut("bean(*Service*)")
+public void dataPackageConfigUsingBean() {}
+
+어노테이션으로 AOP를 구현할 수 있다.
+
+
+#빌드 시스템
+Maven 
+개발자가 자주 하는 작업
+1. 새로운 프로젝트를 만든다.
+2. 의존성과 버젼을 관리한다.
+    - Spring, Spring MVC, Hibernate, ...
+    - Add / modify dependencies
+3. Build a JAR file
+4. 로컬에서 어플리케이션을 실행한다. 톰캣이나 제티 같은...
+5. 단위 테스트를 실행한다.
+6. 배포한다.
+메이븐은 이런 작업과 많은 것에 대해 도움을 준다.
+
+프로젝트 메타
+GROUP: 패키지와 비슷한 개념. 루트 패키지인가?
+Artifact : 다른 프로젝트에서 참조할 때 필요하다.
+
+프로젝트 오브젝트 모델 (pom.xml)
+1. 메이븐 의존성(maven dependencies) : 프레임워크 & 라이브러리 
+    project/dependencies
+    의존성을 추가하면 그와 관련된 의존성이 같이 추가되는데 이것을 전이 의존성이라고 한다.
+
+2. Parent Pom: spring-boot-starter-parent
+    maven build ... > help:effective-pom
+    xml이 출력되는데.. 
+    version 정보를 제공하지 않아도.. effective-pom에서 참조해서 가져온다.
+
+    spring 의존성이랑 maven 의존성이랑 구분해야 한다고 했는데...
+
+    dependencyManagement에서는 버젼 정보 ?상세 정보가 들어있다 실제로 다운로드 되지는 않는다.
+    dependencies에 들어가 있으면 다운로드 된다.
+
+    의존성 관리(dependencyManagement): spring-boot-dependencies를 통한 관리이다.
+    properties : java.version, plugins and configurations
+
+3. 프로젝트 정보
+    groupId, artifectId - 고유 이름 : 다른 프로젝트에서 여기 것을 쓸때는 이것을 기술하면 된다.
+    version도 써야 한다.
+    왜 중요하냐? 이 프로젝트를 다른 곳에서 쓰기 위해서는 고유명이 필요하다.
+
+4. Activity: help:effective-pon, dependency:tree &
+
+pom.xml 에서 문제가 생기면 effective-pom을 확인해라.
+
+maven 빌드 라이프 사이클
+1. maven커멘드를 쓰면 maven 빌드 주기를 사용한다.
+2. 빌드 주기 시퀀스
+    1) Validate
+    2) Compile
+    3) Test
+    4) Package
+    5) Integration Test
+    6) Verify
+    7) Install
+    8) Deploy
