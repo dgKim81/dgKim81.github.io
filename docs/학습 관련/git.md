@@ -39,7 +39,7 @@ git restore .               작업 파일 되돌리기
 git restore --staged        스태이지된 파일 되돌리기(workdirectory로 변경해줌.)
 git reset                   이전 커밋으로 되돌리기(이후 커밋 파일은 그대로 남음)
 git reset --hard            이전 커밋으로 되돌리기(위험)
-git Revert HEAD~2           커밋을 만들면서 이전으로 돌리기
+git revert HEAD~2           커밋을 만들면서 이전으로 돌리기
 
 git clone <url>
 git remote -v               리포트 목록 보기기

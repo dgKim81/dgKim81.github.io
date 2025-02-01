@@ -845,8 +845,8 @@ public void dataPackageConfigUsingBean() {}
 어노테이션으로 AOP를 구현할 수 있다.
 
 
-#빌드 시스템
-Maven 
+# 빌드 시스템
+## Maven 
 개발자가 자주 하는 작업
 1. 새로운 프로젝트를 만든다.
 2. 의존성과 버젼을 관리한다.
@@ -889,7 +889,7 @@ Artifact : 다른 프로젝트에서 참조할 때 필요하다.
 
 pom.xml 에서 문제가 생기면 effective-pom을 확인해라.
 
-maven 빌드 라이프 사이클
+#### maven 빌드 라이프 사이클
 1. maven커멘드를 쓰면 maven 빌드 주기를 사용한다.
 2. 빌드 주기 시퀀스
     1) Validate
@@ -900,3 +900,83 @@ maven 빌드 라이프 사이클
     6) Verify
     7) Install
     8) Deploy
+
+maven의 작동 원리.
+메이븐은 컨벤션(관습) 설정을 제공한다.
+- 미리 정의된 폴더 구조
+- 대부분의 자바 프로젝트는 메이븐 구조를 따른다.
+메이븐은 Central repository 에 groupid와 artifactid 로 인덱스된 jars 파일을 포함한다.
+- 설정은 repository 에서 할 수 있다.
+- 혹은 pluginRepositories 에서 할 수 있다.
+디팬던시를 pom.xml에 추가하면 메이븐은 디팬던시를 다운로드 하려고 시도한다.
+- 메이븐 로컬 리포지토리로 설치하려 한다.
+
+mvn --version 
+mvn compile  : 소스파일만 컴파일하려고 할 때 쓴다.
+mvn test-compile : 테스트를 컴파일한다.
+mvn clean : 정리를 한다.
+mvn test : 메이븐을 테스트 한다.
+mvn package : jar 파일을 생성한다.
+mvn help:effective-pom  : pom 파일을 생성한다. version정보를 포함하고 있다.
+mvn dependency:tree   : 의존성 전체 트리를 볼 수 있다.
+
+버젼 관리를 어떻게 할까요?
+버젼 번호 : major.minor.patch-modifier
+메이져 번호는 : 작업할게 굉장히 많은 변경사항이다.
+마이너 버젼 : 조금 업그레이드 할것이 있는 경우.
+패치 버젼 : 수정할 것이 없는 업그래이드.
+모디파이어 : 옵셔널!
+    - Milestones - M1, M2, ... (10.3.0-M1, 10.3.0-M2)
+    - Release candidates - RC1, RC2, ...
+    - Snapshots - SNAPSHOT
+    - Release - Modifier will be ABSENT (10.0.0, 10.1.0)
+
+
+## Gradle
+빌드하고, 자동화하고 또 더 소프트웨어를 보다 더 빠르게 전달할 수 있도록 지원한다.
+    Cross-Platform Tool 이다.
+    완전히 프로그래밍 가능하다.
+        완전한 유연성
+        DSL을 사용한다. Groovy , Kotlin
+    굉장히 빠르게 빌드한다.
+        컴파일 회피, 고급 캐싱
+        메이븐보다 90프로 바르다.
+            증분 빌딩 - 필요한 것만 그래딜이 실행된다.
+            빌드 캐시 - 같은 인풋에 대해서 재사용된다.
+동일한 자바프로젝트 레이아웃을 사용한다.
+IDE 지원은 여전히 개선 중이다.
+
+### Gradle 빌드 및 설정 파일 살펴보기
+
+### Gradle Plugins 
+JavaPlugins for Gradle
+1) Java Plugin : Java compilation + testing + bundling capabilities
+- 자바 커파일을 빌드 한다.
+- 자바 기본 레이아웃을 제공한다.
+    - src/main/java
+    - src/main/resources
+    - src/test/java
+    - src/test/resources
+- 주요 작업은 : 빌드!
+ex) build
+
+2) Dependency Management: Maven처럼 의존성을 관리한다.
+- 정식으로 쓰면 아래 처럼 써야 하지만 그다음 줄처럼 줄일 수 있다.
+ex) implementation  group : 'org.springframework.boot' ,  name : 'spring-boot-starter-data-jpa' , version : '2.6.3'
+ex) implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.3'
+groupId, artifectId, version 이다.
+
+3) Spring Boot Gradle Plugin: 스프링부트 지원을 제공한다.
+- Spring Boot jar 파일, 컨테이너 이미지를 빌드하는데 유용하다.(bootJar, bootBuildImage)
+- 스프링부터 의존성으로부터 의존성을 관리하는 것이 활성화 되어 있다.
+
+### Maven vs Gradle
+- 메이븐의 장점 : 익숙하고, 간단하고 제한적이다.
+- 그래딜의 장점 : 매우 유연하다, 빠르다!, 덜 장황하다.
+
+재미있네.. 아래처럼 build.gradle에 추가하니까 실행이 되네...
+tasks.register('helloWorld') {
+	doLast {
+		System.out.println("Hello World!");
+	}
+}
