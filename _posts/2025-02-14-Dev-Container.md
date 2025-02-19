@@ -7,7 +7,7 @@ date: 2025-02-14 12:56:00 +0900
 categories: [개발 일상]
 tags: [Visual Code, 팁]
 pin: false
-media_subpath: '/posts/20250104'
+media_subpath: '/posts/20250214'
 comments: true
 ---
 
