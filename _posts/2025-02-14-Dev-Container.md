@@ -15,7 +15,7 @@ comments: true
 ## Visual Studio Code Dev Containers 확장 기능 설치
 
 visual studio code에서 dev container 설치.
-![Desktop View](/posts/20250214/setup-01.png)
+![Desktop View](setup-01.png)
 
 Extensions에서 dev container라고 검색을 하면 찾을 수 있다.
 
@@ -46,10 +46,10 @@ code .
 
 ## 살펴 보기
 
-![프로젝트 열기](/posts/20250214/open-dev-container-01.png)
+![프로젝트 열기](open-dev-container-01.png)
 일단 간단한 Nodejs 프로젝트 이다.
 
-![프로젝트 열기](/posts/20250214/open-dev-container-04.png)
+![프로젝트 열기](open-dev-container-04.png)
 처음에 접근했을 때는 우측 아래에 dev container로 열겠느냐라는 물음이 왔었다.
 열겠다고 하니 뭔가 바뀌었다.
 
@@ -159,11 +159,11 @@ CONTAINER ID   IMAGE                                                            
 ### 실행해보기
 
 소스는 Node js Express 서버 구현이다. 바로 실행 버튼을 "F5"를 입력하니 실행이 된다.
-![실행 결과](/posts/20250214/run-nodejs-01.png)
+![실행 결과](run-nodejs-01.png)
 
 ### vs code remote explorer 확인
 
-![Remote Explorer 확인](/posts/20250214/dev-container-info-01.png)
+![Remote Explorer 확인](dev-container-info-01.png)
 명령으로 이것 저것 확인하고 있었는데, 옆에 쉽게 볼 수 있는 메뉴가 있다.
 
 ## 결론
