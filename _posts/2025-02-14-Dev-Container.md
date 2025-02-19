@@ -14,7 +14,7 @@ comments: true
 # Visual Studio Code Dev Container
 ## Visual Studio Code Dev Containers 확장 기능 설치
 
-visual studio code에서 dev container 설치.
+visual studio code에서 dev container 설치하기.
 ![Desktop View](setup-01.png)
 
 Extensions에서 dev container라고 검색을 하면 찾을 수 있다.
