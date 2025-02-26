@@ -108,3 +108,4 @@ $ minikube dashboard > $HOME/project/docker/dashboard.log 2>&1 & disown
 ```
 
 ![Minikube dashboard](minikube-dashboard.png)
+
