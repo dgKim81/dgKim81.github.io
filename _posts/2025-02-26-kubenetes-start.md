@@ -80,6 +80,7 @@ error: error validating "/etc/kubernetes/addons/storage-provisioner.yaml": error
 
 뭔가 오류가 보이는데.. 이상없으면 그냥 진행했다. `minikube status`는 현재 상태를 알아보는 명령이다.
 
+
 ``` bash
 $ minikube status
 minikube
