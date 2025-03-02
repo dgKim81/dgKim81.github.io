@@ -54,7 +54,7 @@ webmaster_verifications:
 # Web Analytics Settings
 analytics:
   google:
-    id: # fill in your Google Analytics ID
+    id: GTM-KQTL5XTB # fill in your Google Analytics ID
   goatcounter:
     id: # fill in your GoatCounter ID
   umami:
@@ -193,7 +193,7 @@ sass:
   load_paths:
     - _sass
     - assets/css
-    
+
 compress_html:
   clippings: all
   comments: all
