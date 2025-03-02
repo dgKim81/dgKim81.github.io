@@ -29,10 +29,11 @@
       if (event.origin === origin) {
         {%- comment -%} page initial {%- endcomment -%}
         theme = initTheme;
-      } else if (event.source === window && event.data && event.data.direction === ModeToggle.ID) {
+      } else if (event.source === window && event.data) { // && event.data.direction === ModeToggle.ID) {
         {%- comment -%} global theme mode changed {%- endcomment -%}
         const mode = event.data.message;
-        theme = mode === ModeToggle.DARK_MODE ? darkTheme : lightTheme;
+        //theme = mode === ModeToggle.DARK_MODE ? darkTheme : lightTheme;
+        theme = lightTheme;
       } else {
         return;
       }
