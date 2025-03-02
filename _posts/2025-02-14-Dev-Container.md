@@ -4,8 +4,8 @@ description: >-
   개발 환경에 대한 편의 도구
 author: dgkim
 date: 2025-02-14 12:56:00 +0900
-categories: [개발 일상]
-tags: [Visual Code, 팁]
+categories: [학습]
+tags: [Visual Code, 팁, Docker]
 pin: false
 media_subpath: '/assets/posts/20250214'
 comments: true

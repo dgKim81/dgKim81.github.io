@@ -4,7 +4,7 @@ description: >-
   Kubernetes를 익히기 위한 도구
 author: dgkim
 date: 2025-02-26 08:32:00 +0900
-categories: [개발 일상]
+categories: [학습]
 tags: [팁]
 pin: false
 media_subpath: '/assets/posts/20250226'
